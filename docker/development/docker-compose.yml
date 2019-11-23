@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+    dikis:
+        build:
+            context: ../..
+            dockerfile: docker/development/Dockerfile
+        working_dir: /app
+        user: 'node'
+        volumes:
+            - maven-cache:/home/node/.m2
+            - ../..:/app
+        ports:
+            - "8000:8000"
+            - "3333:3333"
+            - "9630:9630"
+
+volumes:
+    maven-cache:
