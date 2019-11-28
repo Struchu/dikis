@@ -1,12 +1,43 @@
 (ns app.core
-  [:require [reagent.core :as r]])
+  (:require [reagent.core :as r]
+            [re-frame.core :as rf]
+            [app.db]
+            [app.router :as router]
+            ;; -- Firebase --
+            [app.firebase.auth :refer [on-auth-state-changed]]
+            [app.firebase.init :refer [firebase-init]]
+            [app.firebase.events]
+            ;; -- auth --
+            [app.auth.views.sign-in :refer [sign-in]]
+            [app.auth.events]
+            [app.auth.subs]
+            ;; -- call to action --
+            [app.call-to-action.views.call-to-action :refer [call-to-action]]
+            ;; -- nav --
+            [app.nav.views.nav :refer [nav]]
+            [app.nav.events]
+            [app.nav.subs]))
+
+(defn pages
+  [page-name]
+  (case page-name
+    :call [call-to-action]
+    :sign-in [sign-in]
+    [call-to-action]))
 
 (defn app
   []
-  [:div "Dikis"])
+  (let [active-page @(rf/subscribe [:active-page])]
+    [:<>
+      [nav]
+      (pages active-page)]))
 
 (defn ^:dev/after-load start
   []
+  (rf/dispatch-sync [:initialize-db])
+  (router/start!)
+  (firebase-init)
+  (on-auth-state-changed)
   (r/render [app]
     (.getElementById js/document "app")))
 
