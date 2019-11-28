@@ -8,8 +8,8 @@
   []
   (let [logged-in? @(rf/subscribe [:logged-in?])
         navbar-open? @(rf/subscribe [:navbar-open?])]
-    [:nav.navbar.is-transparent {:role "navigation"
-                                 :aria-label "main navigation"}
+    [:nav.navbar.is-light {:role "navigation"
+                           :aria-label "main navigation"}
       [:div.navbar-brand
         [:a.navbar-item {:href (router/path-for :call-to-action)}
           "Dikis"]

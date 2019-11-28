@@ -11,7 +11,7 @@
       (if user
         (let [uid (.-uid user)
               display-name (.-displayName user)
-              photo-url (.-photoUrl user)
+              photo-url (.-photoURL user)
               email (.-email user)]
           (rf/dispatch [:set-user {:uid uid
                                   :display-name display-name

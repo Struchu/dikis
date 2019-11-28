@@ -3,7 +3,13 @@
 
 (defn authenticated
   []
-  [:div.navbar-end
-   [:a.navbar-item {:href "#"
-                    :on-click #(rf/dispatch [:sign-out])}
-    "Sign out"]])
+  (let [{:keys [photo-url]} @(rf/subscribe [:profile])]
+    [:div.navbar-end
+     [:div.navbar-item.has-dropdown.is-hoverable
+      [:a.navbar-link 
+       [:figure.image.is-24x24
+        [:img.is-rounded {:src photo-url}]]]
+      [:div.navbar-dropdown
+       [:a.navbar-item {:href "#"
+                        :on-click #(rf/dispatch [:sign-out])}
+        "Sign out"]]]]))

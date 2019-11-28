@@ -5,3 +5,8 @@
   :logged-in?
   (fn [db _]
     (boolean (get-in db [:auth :uid]))))
+
+(reg-sub
+  :profile
+  (fn [db _]
+    (get-in db [:auth :profile])))
