@@ -6,8 +6,7 @@
   []
   (.onAuthStateChanged
     (firebase/auth)
-    (fn
-      [user]
+    (fn [user]
       (if user
         (let [uid (.-uid user)
               display-name (.-displayName user)

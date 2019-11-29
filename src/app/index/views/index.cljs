@@ -1,7 +1,6 @@
-(ns app.call-to-action.views.call-to-action)
+(ns app.index.views.index)
 
-(defn call-to-action
-  "Call to action page"
+(defn index
   []
   [:div.hero.is-medium.is-primary.is-bold
     [:div.hero-body

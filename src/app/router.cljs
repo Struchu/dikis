@@ -3,7 +3,7 @@
             [pushy.core :as pushy]
             [re-frame.core :as rf]))
 
-(def routes ["/" {""            :call-to-action
+(def routes ["/" {""            :index
                   "sign-in/"    :sign-in}])
 
 (def history

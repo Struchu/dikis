@@ -11,8 +11,8 @@
             [app.auth.views.sign-in :refer [sign-in]]
             [app.auth.events]
             [app.auth.subs]
-            ;; -- call to action --
-            [app.call-to-action.views.call-to-action :refer [call-to-action]]
+            ;; -- index --
+            [app.index.views.index :refer [index]]
             ;; -- nav --
             [app.nav.views.nav :refer [nav]]
             [app.nav.events]
@@ -21,9 +21,9 @@
 (defn pages
   [page-name]
   (case page-name
-    :call [call-to-action]
+    :index [index]
     :sign-in [sign-in]
-    [call-to-action]))
+    [index]))
 
 (defn app
   []

@@ -1,7 +1,7 @@
 (ns app.firebase.init
   (:require ["firebase/app" :as firebase]
             ["firebase/auth"]
-            ["firebase/database"]))
+            ["firebase/firestore"]))
 
 (defn firebase-init
   []

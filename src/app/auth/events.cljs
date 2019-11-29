@@ -4,13 +4,15 @@
 (reg-event-fx
   :set-user
   (fn [{:keys [db]} [_ {:keys [uid display-name photo-url email]}]]
-    {:db (-> db
-             (assoc-in [:auth :uid] uid)
-             (assoc-in [:auth :profile] {:uid uid
-                                         :display-name display-name
-                                         :photo-url photo-url
-                                         :email email}))
-     :navigate-to {:path "/"}}))
+    (let [profile {:uid uid
+                :display-name display-name
+                :photo-url photo-url
+                :email email}]
+      {:db (-> db
+               (assoc-in [:auth :uid] uid)
+               (assoc-in [:auth :profile] profile))
+       :navigate-to {:path "/"}
+       :save-user profile})))
 
 (reg-event-fx
   :clear-user
