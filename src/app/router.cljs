@@ -4,7 +4,8 @@
             [re-frame.core :as rf]))
 
 (def routes ["/" {""            :index
-                  "sign-in/"    :sign-in}])
+                  "sign-in/"    :sign-in
+                  "teams/"      :teams}])
 
 (def history
   (let [dispatch #(rf/dispatch [:route-changed %])

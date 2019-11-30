@@ -16,13 +16,17 @@
             ;; -- nav --
             [app.nav.views.nav :refer [nav]]
             [app.nav.events]
-            [app.nav.subs]))
+            [app.nav.subs]
+            ;; -- teams --
+            [app.teams.views.teams-page :refer [teams-page]]
+            [app.teams.events]))
 
 (defn pages
   [page-name]
   (case page-name
     :index [index]
     :sign-in [sign-in]
+    :teams [teams-page]
     [index]))
 
 (defn app

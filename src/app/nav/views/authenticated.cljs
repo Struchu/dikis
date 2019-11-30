@@ -1,5 +1,6 @@
 (ns app.nav.views.authenticated
-  (:require [re-frame.core :as rf]))
+  (:require [re-frame.core :as rf]
+            [app.router :as router]))
 
 (defn authenticated
   []
@@ -10,6 +11,8 @@
        [:figure.image.is-24x24
         [:img.is-rounded {:src photo-url}]]]
       [:div.navbar-dropdown
+       [:a.navbar-item {:href (router/path-for :teams)}
+        "Teams"]
        [:a.navbar-item {:href "#"
                         :on-click #(rf/dispatch [:sign-out])}
         "Sign out"]]]]))

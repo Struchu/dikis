@@ -10,3 +10,8 @@
   :active-page
   (fn [db _]
     (get-in db [:nav :active-page])))
+
+(reg-sub
+  :active-modal
+  (fn [db _]
+    (get-in db [:nav :active-modal])))

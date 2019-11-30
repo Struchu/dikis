@@ -11,7 +11,7 @@
     [:nav.navbar.is-light {:role "navigation"
                            :aria-label "main navigation"}
       [:div.navbar-brand
-        [:a.navbar-item {:href (router/path-for :call-to-action)}
+        [:a.navbar-item {:href (router/path-for :index)}
           "Dikis"]
         [:div.navbar-burger.burger {:class (when navbar-open? "is-active")
                                     :aria-label "menu"

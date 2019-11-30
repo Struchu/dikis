@@ -16,3 +16,13 @@
   :route-changed
   (fn [db [_ {:keys [handler]}]]
     (assoc-in db [:nav :active-page] handler)))
+
+(reg-event-db
+  :open-modal
+  (fn [db [_ modal-name]]
+    (assoc-in db [:nav :active-modal] modal-name)))
+
+(reg-event-db
+  :close-modal
+  (fn [db _]
+    (assoc-in db [:nav :active-modal] nil)))

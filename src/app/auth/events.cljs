@@ -1,5 +1,6 @@
 (ns app.auth.events
-  (:require [re-frame.core :refer [reg-event-fx]]))
+  (:require [re-frame.core :refer [reg-event-fx]]
+            [app.router :as router]))
 
 (reg-event-fx
   :set-user
@@ -11,7 +12,7 @@
       {:db (-> db
                (assoc-in [:auth :uid] uid)
                (assoc-in [:auth :profile] profile))
-       :navigate-to {:path "/"}
+       :navigate-to {:path (router/path-for :teams)}
        :save-user profile})))
 
 (reg-event-fx
@@ -20,7 +21,7 @@
     {:db (-> db
              (assoc-in [:auth :uid] nil)
              (assoc-in [:auth :profile] nil))
-     :navigate-to {:path "/"}}))
+     :navigate-to {:path (router/path-for :index)}}))
 
 (reg-event-fx
   :sign-in-with-google
