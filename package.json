@@ -2,6 +2,7 @@
   "name": "dikis",
   "version": "0.0.0",
   "description": "Platform to award your friends with dick of shame",
+  "repository": "https://github.com/Struchu/dikis.git",
   "main": "index.js",
   "scripts": {
     "watch-cljs": "shadow-cljs watch app",
