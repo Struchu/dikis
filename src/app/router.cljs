@@ -12,9 +12,7 @@
         match #(bidi/match-route routes %)]
     (pushy/pushy dispatch match)))
 
-(defn path-for
-  [route]
-  (bidi/path-for routes route))
+(def path-for (partial bidi/path-for routes))
 
 (defn start!
   []

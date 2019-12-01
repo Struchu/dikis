@@ -8,4 +8,4 @@
     [:div.level-left
      [:h1.title "Teams"]]
     [:div.level-right
-      [:p.level-item [team-creator]]]]])
+      [:div.level-item [team-creator]]]]])

@@ -5,7 +5,9 @@
                            :active-page nil
                            :active-modal nil}
                      :auth {:uid nil
-                            :profile nil}})
+                            :profile nil}
+                     :firebase {}
+                     :teams {}})
 
 (rf/reg-event-db
   :initialize-db

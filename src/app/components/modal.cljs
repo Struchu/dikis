@@ -8,7 +8,7 @@
      [:div.modal-background]
      [:div.modal-card
       [:div.modal-card-head
-       [:p.modal-card-title title]
+       [:div.modal-card-title title]
        [:button.delete {:aria-label "close"
                         :on-click #(rf/dispatch [:close-modal])}]]
       [:div.modal-card-body body]
