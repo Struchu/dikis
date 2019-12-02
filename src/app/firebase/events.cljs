@@ -14,28 +14,6 @@
   (fn [_]
     (.signOut (firebase/auth))))
 
-(reg-fx
-  :firebase/save-user
-  (fn [{:keys [uid display-name photo-url email]}]
-    (let [users-collection (db/collection :users)
-          user-ref (db/ref users-collection uid)]
-      (db/save! user-ref {:uid uid
-                          :display-name display-name
-                          :photo-url photo-url
-                          :email email}))))
-
-(reg-fx
-  :firebase/create-team
-  (fn [{:keys [uid team-id name picture-url]}]
-    (let [user-team-collection (db/collection :user-team)
-          user-team-ref (db/ref user-team-collection (db/user-team-id uid team-id))]
-      (db/save! user-team-ref {:uid uid
-                               :team-id team-id
-                               :name name
-                               :picture-url picture-url
-                               :role :admin
-                               :invitation :accepted}))))
-
 (defn handle-snapshot
   [event snapshot]
   (let [data (map #(js->clj (.data %) :keywordize-keys true) (.-docs snapshot))]

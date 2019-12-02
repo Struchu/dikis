@@ -1,15 +1,25 @@
 (ns app.auth.events
-  (:require [re-frame.core :refer [reg-event-fx]]
+  (:require [re-frame.core :refer [reg-event-fx reg-fx]]
             [app.firebase.db :as db]
             [app.router :as router]))
+
+(reg-fx
+  :save-user
+  (fn [{:keys [uid display-name photo-url email]}]
+    (let [users-collection (db/collection :users)
+          user-ref (db/ref users-collection uid)]
+      (db/save! user-ref {:uid uid
+                          :display-name display-name
+                          :photo-url photo-url
+                          :email email}))))
 
 (reg-event-fx
   :set-user
   (fn [{:keys [db]} [_ {:keys [uid display-name photo-url email]}]]
     (let [profile {:uid uid
-                :display-name display-name
-                :photo-url photo-url
-                :email email}
+                   :display-name display-name
+                   :photo-url photo-url
+                   :email email}
           user-team-query (-> (db/collection :user-team)
                               (db/where :uid "==" uid)
                               (db/where :invitation "==" :accepted))]
@@ -17,7 +27,7 @@
                (assoc-in [:auth :uid] uid)
                (assoc-in [:auth :profile] profile))
        :navigate-to {:path (router/path-for :teams)}
-       :firebase/save-user profile
+       :save-user profile
        :firebase/subscribe-to {:query user-team-query
                                :event :save-teams
                                :key :user-team}})))

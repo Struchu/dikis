@@ -19,7 +19,8 @@
             [app.nav.subs]
             ;; -- teams --
             [app.teams.views.teams-page :refer [teams-page]]
-            [app.teams.events]))
+            [app.teams.events]
+            [app.teams.subs]))
 
 (defn pages
   [page-name]

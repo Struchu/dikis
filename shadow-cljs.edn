@@ -17,8 +17,7 @@
                                                            day8.re-frame.tracing/trace-enabled? true}}
 
                       :devtools {:http-root   "public"
-                                 :http-port   8000
-                                 :preloads    [day8.re-frame-10x.preload]}
+                                 :http-port   8000}
 
                       :release {:output-dir "dist/js"
                                 :module-hash-names 8}}}}
