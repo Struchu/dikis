@@ -11,8 +11,12 @@
             [app.auth.views.sign-in :refer [sign-in]]
             [app.auth.events]
             [app.auth.subs]
+            ;; -- dicks --
+            [app.dicks.views.dicks-page :refer [dicks-page]]
             ;; -- index --
             [app.index.views.index :refer [index]]
+            ;; -- invitations --
+            [app.invitations.views.invitations-page :refer [invitations-page]]
             ;; -- nav --
             [app.nav.views.nav :refer [nav]]
             [app.nav.events]
@@ -28,6 +32,8 @@
     :index [index]
     :sign-in [sign-in]
     :teams [teams-page]
+    :dicks [dicks-page]
+    :invitations [invitations-page]
     [index]))
 
 (defn app

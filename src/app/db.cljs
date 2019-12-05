@@ -3,6 +3,7 @@
 
 (def initial-app-db {:nav {:navbar-open? true
                            :active-page nil
+                           :active-team nil
                            :active-modal nil}
                      :auth {:uid nil
                             :profile nil}

@@ -1,6 +1,8 @@
 (ns app.nav.events
-  (:require [re-frame.core :refer [reg-event-db reg-fx]]
+  (:require [re-frame.core :refer [reg-event-db reg-event-fx reg-fx path]]
             [app.router :as router]))
+
+(def nav-interceptors [(path :nav)])
 
 (reg-fx
   :navigate-to
@@ -9,20 +11,29 @@
 
 (reg-event-db
   :toggle-navbar-open
-  (fn [db _]
-    (update-in db [:nav :navbar-open?] not)))
+  nav-interceptors
+  (fn [nav _]
+    (update nav :navbar-open? not)))
 
-(reg-event-db
+(reg-event-fx
   :route-changed
-  (fn [db [_ {:keys [handler]}]]
-    (assoc-in db [:nav :active-page] handler)))
+  nav-interceptors
+  (fn [{nav :db} [_ {:keys [handler route-params]}]]
+    (let [nav (assoc nav :active-page handler)]
+      (case handler
+        :dicks
+        {:db (assoc nav :active-team (keyword (:team-id route-params)))}
+        
+        {:db (dissoc nav :active-team)}))))
 
 (reg-event-db
   :open-modal
-  (fn [db [_ modal-name]]
-    (assoc-in db [:nav :active-modal] modal-name)))
+  nav-interceptors
+  (fn [nav [_ modal-name]]
+    (assoc nav :active-modal modal-name)))
 
 (reg-event-db
   :close-modal
-  (fn [db _]
-    (assoc-in db [:nav :active-modal] nil)))
+  nav-interceptors
+  (fn [nav _]
+    (assoc nav :active-modal nil)))

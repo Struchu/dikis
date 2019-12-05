@@ -11,7 +11,7 @@
 
 (reg-fx
   :create-team
-  (fn [{:keys [uid team-id name picture-url]}]
+  (fn [{:keys [uid team-id name picture-url profile]}]
     (let [user-team-collection (db/collection :user-team)
           user-team-ref (db/ref user-team-collection (db/user-team-id uid team-id))]
       (db/save! user-team-ref {:uid uid
@@ -19,34 +19,30 @@
                                :name name
                                :picture-url picture-url
                                :role :admin
+                               :profile profile
                                :invitation :accepted}))))
 
 (reg-event-fx
   :create-team
   (inject-cofx :team-id)
   (fn [{:keys [db team-id]} [_ {:keys [name picture-url]}]]
-    (let [uid (get-in db [:auth :uid])]
+    (let [uid (get-in db [:auth :uid])
+          {:keys [photo-url display-name]} (get-in db [:auth :profile])]
       {:create-team {:uid uid
                      :team-id team-id
                      :name name
+                     :profile {:photo-url photo-url
+                               :display-name display-name}
                      :picture-url picture-url}})))
 
-(defn convert-teams
+(defn keywordize-teams
   [teams]
   (let [teams-with-keywords (map #(-> %
                                       (update :role keyword)
                                       (update :invitation keyword)) teams)]
     (h/index-by :team-id teams-with-keywords)))
 
-(def team-converter
-  (->interceptor
-    :id :team-converter
-    :before (fn [context]
-              (update-in context [:coeffects :event] (fn [[id {:keys [data]}]]
-                                                       [id {:data (convert-teams data)}])))))
-
 (reg-event-db
   :save-teams
-  [team-converter]
   (fn [db [_ {:keys [data]}]]
-    (assoc db :teams data)))
+    (assoc db :teams (keywordize-teams data))))

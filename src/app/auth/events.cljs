@@ -1,7 +1,9 @@
 (ns app.auth.events
-  (:require [re-frame.core :refer [reg-event-fx reg-fx]]
+  (:require [re-frame.core :refer [reg-event-fx reg-fx path]]
             [app.firebase.db :as db]
             [app.router :as router]))
+
+(def auth-interceptors [(path :auth)])
 
 (reg-fx
   :save-user
@@ -15,30 +17,36 @@
 
 (reg-event-fx
   :set-user
-  (fn [{:keys [db]} [_ {:keys [uid display-name photo-url email]}]]
+  auth-interceptors
+  (fn [{auth :db} [_ {:keys [uid display-name photo-url email]}]]
     (let [profile {:uid uid
                    :display-name display-name
                    :photo-url photo-url
-                   :email email}
-          user-team-query (-> (db/collection :user-team)
-                              (db/where :uid "==" uid)
-                              (db/where :invitation "==" :accepted))]
-      {:db (-> db
-               (assoc-in [:auth :uid] uid)
-               (assoc-in [:auth :profile] profile))
+                   :email email}]
+      {:db (-> auth
+               (assoc :uid uid)
+               (assoc :profile profile))
        :navigate-to {:path (router/path-for :teams)}
        :save-user profile
-       :firebase/subscribe-to {:query user-team-query
+       :firebase/subscribe-to {:query [:user-team
+                                       :uid "==" uid
+                                       :invitation "==" :accepted]
                                :event :save-teams
                                :key :user-team}})))
 
 (reg-event-fx
   :clear-user
   (fn [{:keys [db]} _]
+    (let [subscriptions (-> db
+                            (:firebase)
+                            (vals))]
     {:db (-> db
              (assoc-in [:auth :uid] nil)
-             (assoc-in [:auth :profile] nil))
-     :navigate-to {:path (router/path-for :index)}}))
+             (assoc-in [:auth :profile] nil)
+             (assoc :firebase {})
+             (assoc :teams {}))
+     :firebase/clear-subscriptions {:subscriptions subscriptions}
+     :navigate-to {:path (router/path-for :index)}})))
 
 (reg-event-fx
   :sign-in-with-google

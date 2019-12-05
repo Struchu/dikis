@@ -22,7 +22,10 @@
 (reg-fx
   :firebase/subscribe-to
   (fn [{:keys [query event key]}]
-    (let [subscription (.onSnapshot query (partial handle-snapshot event))]
+    (let [[coll & query-desc] query
+          query-steps (partition 3 query-desc)
+          q (reduce #(apply db/where %1 %2) (db/collection coll) query-steps)
+          subscription (.onSnapshot q (partial handle-snapshot event))]
       (dispatch [:firebase/save-subscription {:key key
                                               :subscription subscription}]))))
 
