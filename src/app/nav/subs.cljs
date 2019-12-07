@@ -2,16 +2,30 @@
   (:require [re-frame.core :refer [reg-sub]]))
 
 (reg-sub
-  :navbar-open?
+  :nav
   (fn [db _]
-    (get-in db [:nav :navbar-open?])))
+    (get db :nav)))
+
+(reg-sub
+  :navbar-open?
+  :<- [:nav]
+  (fn [nav _]
+    (get nav :navbar-open?)))
 
 (reg-sub
   :active-page
-  (fn [db _]
-    (get-in db [:nav :active-page])))
+  :<- [:nav]
+  (fn [nav _]
+    (get nav :active-page)))
 
 (reg-sub
   :active-modal
-  (fn [db _]
-    (get-in db [:nav :active-modal])))
+  :<- [:nav]
+  (fn [nav _]
+    (get nav :active-modal)))
+
+(reg-sub
+  :active-team
+  :<- [:nav]
+  (fn [nav _]
+    (get nav :active-team)))

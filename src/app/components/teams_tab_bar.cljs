@@ -5,9 +5,9 @@
 (defn teams-tab-bar
   []
   [tab-bar {:tabs [{:id :teams
-                          :label "Teams"
-                          :path (router/path-for :teams)}
+                    :label "Teams"
+                    :path (router/path-for :teams)}
 
-                         {:id :invitations
-                          :label "Invitations"
-                          :path (router/path-for :invitations)}]}])
+                   {:id :invitations
+                    :label "Invitations"
+                    :path (router/path-for :invitations)}]}])

@@ -24,7 +24,10 @@
             ;; -- teams --
             [app.teams.views.teams-page :refer [teams-page]]
             [app.teams.events]
-            [app.teams.subs]))
+            [app.teams.subs]
+            ;; -- users --
+            [app.users.views.users-page :refer [users-page]]
+            [app.users.events]))
 
 (defn pages
   [page-name]
@@ -34,6 +37,7 @@
     :teams [teams-page]
     :dicks [dicks-page]
     :invitations [invitations-page]
+    :users [users-page]
     [index]))
 
 (defn app

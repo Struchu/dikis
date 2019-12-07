@@ -12,15 +12,17 @@
 (reg-fx
   :create-team
   (fn [{:keys [uid team-id name picture-url profile]}]
-    (let [user-team-collection (db/collection :user-team)
-          user-team-ref (db/ref user-team-collection (db/user-team-id uid team-id))]
-      (db/save! user-team-ref {:uid uid
-                               :team-id team-id
-                               :name name
-                               :picture-url picture-url
-                               :role :admin
-                               :profile profile
-                               :invitation :accepted}))))
+    (let [team-role-ref (db/ref (db/collection :team-role) team-id)
+          team-member-ref (db/ref (db/collection team-role-ref :members) uid)]
+      (-> (db/batch)
+          (db/saveb! (db/ref (db/collection :user-team)) {:uid uid
+                                                    :team-id team-id
+                                                    :name name
+                                                    :picture-url picture-url
+                                                    :profile profile})
+          (db/saveb! team-role-ref {:creator uid})
+          (db/saveb! team-member-ref {:role :admin})
+          (db/commit!)))))
 
 (reg-event-fx
   :create-team
@@ -35,14 +37,10 @@
                                :display-name display-name}
                      :picture-url picture-url}})))
 
-(defn keywordize-teams
-  [teams]
-  (let [teams-with-keywords (map #(-> %
-                                      (update :role keyword)
-                                      (update :invitation keyword)) teams)]
-    (h/index-by :team-id teams-with-keywords)))
-
 (reg-event-db
   :save-teams
   (fn [db [_ {:keys [data]}]]
-    (assoc db :teams (keywordize-teams data))))
+    (assoc db :teams (->> data
+                         (db/docs)
+                         (map db/doc->clj)
+                         (h/index-by :team-id)))))

@@ -7,7 +7,8 @@
                   "sign-in/"      :sign-in
                   "invitations/"  :invitations
                   "teams/"        {"" :teams
-                                   [:team-id] {"" :dicks}}}])
+                                   [:team-id "/"] :dicks
+                                   [:team-id "/users"] :users}}])
 
 (def history
   (let [dispatch #(rf/dispatch [:route-changed %])
