@@ -5,7 +5,6 @@
 
 (defn teams-page
   []
-  (let [teams @(rf/subscribe [:teams])]
-    [:div.section>div.container
-     [teams-tab-bar] 
-     [team-list teams]]))
+  [:div.section>div.container
+   [teams-tab-bar] 
+   [team-list]])

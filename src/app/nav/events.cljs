@@ -20,17 +20,29 @@
   :route-changed
   (fn [{:keys [db]} [_ {:keys [handler route-params]}]]
     (let [next-page (assoc-in db [:nav :active-page] handler)
-          uid (get-in db [:auth :uid])]
+          teams-subscription {:action :start
+                              :id :user-team
+                              :override true
+                              :subject (-> :user-team
+                                           (db/collection)
+                                           (db/where :uid "==" (get-in db [:auth :uid])))
+                              :event :save-teams}
+          invitations-subscription {:action :start
+                                   :id :invitations
+                                   :subject (-> :invitations
+                                                (db/collection)
+                                                (db/where :email "==" (get-in db [:auth :profile :email])))
+                                   :event :save-invitations}]
       (case handler
         :teams
         {:db (assoc-in next-page [:nav :active-team] nil)
          :app.firebase.events/observations [{:action :clean}
-                                            {:action :start
-                                             :id :user-team
-                                             :subject (-> :user-team
-                                                          (db/collection)
-                                                          (db/where :uid "==" uid))
-                                             :event :save-teams}]}
+                                            teams-subscription
+                                            invitations-subscription]}
+
+        :invitations
+        {:db (assoc-in next-page [:nav :active-team] nil)
+         :app.firebase.events/observation invitations-subscription}
 
         :dicks
         {:db (assoc-in next-page [:nav :active-team] (keyword (:team-id route-params)))}
@@ -51,7 +63,8 @@
                                                           (db/collection)
                                                           (db/ref (:team-id route-params))
                                                           (db/collection :members))
-                                             :event :save-permissions}]}
+                                             :event :save-permissions}
+                                            teams-subscription]}
 
         {:db (assoc-in next-page [:nav :active-team] nil)}))))
 

@@ -3,8 +3,14 @@
 
 (reg-sub
   :logged-in?
+  :<- [:uid]
+  (fn [uid _]
+    (boolean uid)))
+
+(reg-sub
+  :uid
   (fn [db _]
-    (boolean (get-in db [:auth :uid]))))
+    (get-in db [:auth :uid])))
 
 (reg-sub
   :profile

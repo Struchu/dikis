@@ -1,9 +1,28 @@
 (ns app.auth.events
-  (:require [re-frame.core :refer [reg-event-db reg-event-fx reg-fx path]]
+  (:require [re-frame.core :refer [after reg-event-db reg-event-fx reg-cofx reg-fx path]]
+            [cljs.reader :refer [read-string]]
             [app.firebase.db :as db]
             [app.router :as router]))
 
-(def auth-interceptors [(path :auth)])
+(def user-key "dikis-user")
+
+(defn set-user-ls!
+  [auth]
+  (when (:uid auth) (.setItem js/localStorage user-key (str auth))))
+
+(defn remove-user-ls!
+  []
+  (.removeItem js/localStorage user-key))
+
+(reg-cofx
+  :local-store-user
+  (fn [cofx _]
+    (assoc cofx :local-store-user
+           (read-string (.getItem js/localStorage user-key)))))
+
+(def auth-interceptors [(path :auth) (after set-user-ls!)])
+
+(def remove-user-interceptors [(after remove-user-ls!)])
 
 (reg-event-db
   :set-user
@@ -19,6 +38,7 @@
 
 (reg-event-fx
   :clear-user
+  remove-user-interceptors
   (fn [{:keys [db]} _]
     (let [subscriptions (-> db
                             (:firebase)

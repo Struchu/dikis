@@ -17,6 +17,8 @@
             [app.index.views.index :refer [index]]
             ;; -- invitations --
             [app.invitations.views.invitations-page :refer [invitations-page]]
+            [app.invitations.events]
+            [app.invitations.subs]
             ;; -- nav --
             [app.nav.views.nav :refer [nav]]
             [app.nav.events]
@@ -27,7 +29,8 @@
             [app.teams.subs]
             ;; -- users --
             [app.users.views.users-page :refer [users-page]]
-            [app.users.events]))
+            [app.users.events]
+            [app.users.subs]))
 
 (defn pages
   [page-name]

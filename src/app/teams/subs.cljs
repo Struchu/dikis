@@ -4,6 +4,7 @@
 (reg-sub
   :teams
   (fn [db _]
-    (-> db
-        (get :teams)
-        (vals))))
+    (->> db
+        (:teams)
+        (vals)
+        (sort-by :name))))

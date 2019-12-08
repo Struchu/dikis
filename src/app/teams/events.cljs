@@ -29,11 +29,12 @@
   (inject-cofx :team-id)
   (fn [{:keys [db team-id]} [_ {:keys [name picture-url]}]]
     (let [uid (get-in db [:auth :uid])
-          {:keys [photo-url display-name]} (get-in db [:auth :profile])]
+          {:keys [photo-url display-name email]} (get-in db [:auth :profile])]
       {:create-team {:uid uid
                      :team-id team-id
                      :name name
-                     :profile {:photo-url photo-url
+                     :profile {:email email
+                               :photo-url photo-url
                                :display-name display-name}
                      :picture-url picture-url}})))
 
