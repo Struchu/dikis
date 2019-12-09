@@ -28,14 +28,12 @@
         {:db (assoc-in next-page [:nav :active-team] (keyword (:team-id route-params)))
          :app.firebase.events/observations [{:action :start
                                              :id :users
-                                             :override true
                                              :subject (-> :user-team
                                                           (db/collection)
                                                           (db/where :team-id "==" (:team-id route-params)))
                                              :event :save-users}
                                             {:action :start
                                              :id :permissions
-                                             :override true
                                              :subject (-> :team-role
                                                           (db/collection)
                                                           (db/ref (:team-id route-params))
