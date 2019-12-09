@@ -9,6 +9,8 @@
                             :profile nil}
                      :teams {}
                      :users {}
+                     :dicks {}
+                     :dicked-user nil
                      :invitations {}
                      :permissions {}})
 

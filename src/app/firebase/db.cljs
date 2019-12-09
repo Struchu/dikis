@@ -1,6 +1,10 @@
 (ns app.firebase.db
   (:require ["firebase/app" :as firebase]))
 
+(defn server-timestamp
+  []
+  (.serverTimestamp (.-FieldValue firebase/firestore)))
+
 (defn collection
   "Returns collection with name derived from col-keyword"
   ([col-keyword] (.collection (firebase/firestore) (name col-keyword)))

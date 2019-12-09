@@ -22,7 +22,13 @@
     (let [next-page (assoc-in db [:nav :active-page] handler)]
       (case handler
         :dicks
-        {:db (assoc-in next-page [:nav :active-team] (keyword (:team-id route-params)))}
+        {:db (assoc-in next-page [:nav :active-team] (keyword (:team-id route-params)))
+         :app.firebase.events/observation {:action :start
+                                           :id :dicks
+                                           :subject (-> :dicks
+                                                        (db/collection)
+                                                        (db/where :team-id "==" (:team-id route-params)))
+                                           :event :save-dicks}}
 
         :users
         {:db (assoc-in next-page [:nav :active-team] (keyword (:team-id route-params)))

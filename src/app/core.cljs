@@ -13,6 +13,8 @@
             [app.auth.subs]
             ;; -- dicks --
             [app.dicks.views.dicks-page :refer [dicks-page]]
+            [app.dicks.events]
+            [app.dicks.subs]
             ;; -- index --
             [app.index.views.index :refer [index]]
             ;; -- invitations --
