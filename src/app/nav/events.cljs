@@ -19,31 +19,8 @@
 (reg-event-fx
   :route-changed
   (fn [{:keys [db]} [_ {:keys [handler route-params]}]]
-    (let [next-page (assoc-in db [:nav :active-page] handler)
-          teams-subscription {:action :start
-                              :id :user-team
-                              :override true
-                              :subject (-> :user-team
-                                           (db/collection)
-                                           (db/where :uid "==" (get-in db [:auth :uid])))
-                              :event :save-teams}
-          invitations-subscription {:action :start
-                                   :id :invitations
-                                   :subject (-> :invitations
-                                                (db/collection)
-                                                (db/where :email "==" (get-in db [:auth :profile :email])))
-                                   :event :save-invitations}]
+    (let [next-page (assoc-in db [:nav :active-page] handler)]
       (case handler
-        :teams
-        {:db (assoc-in next-page [:nav :active-team] nil)
-         :app.firebase.events/observations [{:action :clean}
-                                            teams-subscription
-                                            invitations-subscription]}
-
-        :invitations
-        {:db (assoc-in next-page [:nav :active-team] nil)
-         :app.firebase.events/observation invitations-subscription}
-
         :dicks
         {:db (assoc-in next-page [:nav :active-team] (keyword (:team-id route-params)))}
 
@@ -63,8 +40,7 @@
                                                           (db/collection)
                                                           (db/ref (:team-id route-params))
                                                           (db/collection :members))
-                                             :event :save-permissions}
-                                            teams-subscription]}
+                                             :event :save-permissions}]}
 
         {:db (assoc-in next-page [:nav :active-team] nil)}))))
 

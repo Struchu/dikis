@@ -14,15 +14,14 @@
   (fn [{:keys [uid team-id name picture-url profile]}]
     (let [team-role-ref (db/ref (db/collection :team-role) team-id)
           team-member-ref (db/ref (db/collection team-role-ref :members) uid)]
-      (-> (db/batch)
-          (db/saveb! (db/ref (db/collection :user-team)) {:uid uid
-                                                    :team-id team-id
-                                                    :name name
-                                                    :picture-url picture-url
-                                                    :profile profile})
-          (db/saveb! team-role-ref {:creator uid})
-          (db/saveb! team-member-ref {:role :admin})
-          (db/commit!)))))
+      (db/batch!
+        #(db/save! % (db/ref (db/collection :user-team)) {:uid uid
+                                                          :team-id team-id
+                                                          :name name
+                                                          :picture-url picture-url
+                                                          :profile profile})
+        #(db/save! % team-role-ref {:creator uid})
+        #(db/save! % team-member-ref {:role :admin})))))
 
 (reg-event-fx
   :create-team

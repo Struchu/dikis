@@ -9,7 +9,7 @@
 (defn ref
   "Gets reference to document with name inside collection col"
   ([collection] (.doc collection))
-  ([collection name] (.doc collection name)))
+  ([collection ref-name] (.doc collection (name ref-name))))
 
 (defn where
   "Adds where clause to the given query"
@@ -18,33 +18,20 @@
 
 (defn save!
   "Saves document doc data in document represented by reference ref"
-  [ref doc]
-  (.set ref (clj->js doc)))
+  ([ref doc] (.set ref (clj->js doc)))
+  ([batch ref doc] (.set batch ref (clj->js doc))))
 
-(defn add-to!
-  "Adds given document doc to collection col"
-  [col doc]
-  (.add col (clj->js doc)))
+(defn delete!
+  "Deletes given document"
+  ([ref] (.delete ref))
+  ([batch ref] (.delete batch ref)))
 
-(defn batch
-  "Starts batched write"
-  []
-  (.batch (firebase/firestore)))
-
-(defn saveb!
-  "Saves given doc to reference ref within batch write"
-  [batch ref doc]
-  (.set batch ref (clj->js doc)))
-
-(defn deleteb!
-  "Deletes given reference within batch write"
-  [batch ref]
-  (.delete batch ref))
-
-(defn commit!
-  "Commits given batch write"
-  [batch]
-  (.commit batch))
+(defn batch!
+  [& ops]
+  (let [apply-ops (partial reduce #(%2 %1))]
+    (-> (.batch (firebase/firestore))
+        (apply-ops ops)
+        (.commit))))
 
 (defn docs
   "Returns documents stored in snapshot"
@@ -58,7 +45,7 @@
         id (.-id snapshot)]
     (-> data
         (js->clj :keywordize-keys true)
-        (assoc :id id))))
+        (assoc :id (keyword id)))))
 
 (defn docs->clj
   "Convenience function that converts given query snapshot into clojure

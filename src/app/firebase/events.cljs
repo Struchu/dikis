@@ -14,7 +14,7 @@
   (fn [_]
     (.signOut (firebase/auth))))
 
-(defonce observation-fx
+(def observation-fx
   (let [subscriptions (atom {})
           save-listener (fn [id subject event]
                           (swap! subscriptions assoc

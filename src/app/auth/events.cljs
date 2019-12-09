@@ -24,17 +24,30 @@
 
 (def remove-user-interceptors [(after remove-user-ls!)])
 
-(reg-event-db
+(reg-event-fx
   :set-user
   auth-interceptors
   (fn [{auth :db} [_ {:keys [uid display-name photo-url email]}]]
-    (let [profile {:uid uid
+    (let [profile {:uid (keyword uid)
                    :display-name display-name
                    :photo-url photo-url
                    :email email}]
-      (-> auth
-          (assoc :uid uid)
-          (assoc :profile profile)))))
+      {:db (-> auth
+               (assoc :uid (keyword uid))
+               (assoc :profile profile))
+       :app.firebase.events/observations [{:action :start
+                                           :id :invitations
+                                           :subject (-> :invitations
+                                                        (db/collection)
+                                                        (db/where :email "==" email))
+                                           :event :save-invitations}
+                                          {:action :start
+                                           :id :user-team
+                                           :override true
+                                           :subject (-> :user-team
+                                                        (db/collection)
+                                                        (db/where :uid "==" uid))
+                                           :event :save-teams}]})))
 
 (reg-event-fx
   :clear-user

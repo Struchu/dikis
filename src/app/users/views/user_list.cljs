@@ -8,8 +8,8 @@
   (let [users @(rf/subscribe [:users])
         admin? @(rf/subscribe [:admin?])]
     [:div.columns.is-multiline
-      [:div.column.is-one-quarter
-       [user-inviter]]
+      (when admin? [:div.column.is-one-quarter
+       [user-inviter]])
       (for [{:keys [uid] :as user} users]
         [:div.column.is-one-quarter {:key uid}
          [user-card user]])]))
