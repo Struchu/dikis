@@ -16,8 +16,9 @@
                       (rf/dispatch [:close-modal]))]
   (fn []
     [:<>
-      [:a.button.is-success {:on-click #(open-modal :invite-user)}
-       "Invite user"]
+      [:a.button.is-light.is-fullwidth.is-fullheight {:on-click #(open-modal :invite-user)}
+       [:span.icon>i.fas.fa-user-friends]
+       [:span "Invite user"]]
       [modal {:modal-name :invite-user
               :title "Invite user"
               :body [:<>

@@ -8,8 +8,10 @@
       [:div.column.is-half.is-offset-one-quarter
         [:div.box
           [:h1.title.has-text-centered "Sign in"]
-          [:a {:href "#"
-               :on-click #(rf/dispatch [:sign-in-with-google])}
-           ;; TODO: replace with icon
-           "Sign in with Google"]]]]])
+          [:div.level>:div.level-item
+           [:a.button.is-large {:href "#"
+                :on-click #(rf/dispatch [:sign-in-with-google])}
+            [:span.icon
+             [:i.fab.fa-google]]
+            [:span "Google"]]]]]]])
 

@@ -17,8 +17,9 @@
                       (rf/dispatch [:close-modal]))]
   (fn []
     [:<>
-      [:a.button.is-success {:on-click #(open-modal :create-team)}
-       "New"]
+      [:a.button.is-light.is-fullwidth.is-fullheight {:on-click #(open-modal :create-team)}
+       [:span.icon>i.fas.fa-plus]
+       [:span "Create new team"]]
       [modal {:modal-name :create-team
               :title "Create team"
               :body [:<>

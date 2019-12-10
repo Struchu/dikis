@@ -161,4 +161,13 @@ tags
 # Persistent undo
 [._]*.un~
 
+### Firebase ###
+.idea
+**/node_modules/*
+**/.firebaserc
+
+#### Firebase Patch ###
+.runtimeconfig.json
+.firebase/
+
 # End of https://www.gitignore.io/api/vim,node,react,linux,clojure

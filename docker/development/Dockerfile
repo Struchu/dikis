@@ -2,6 +2,7 @@ FROM node:12-alpine
 
 WORKDIR /app
 RUN apk --update add openjdk8-jre
+RUN npm install -g firebase-tools shadow-cljs
 
 EXPOSE 8000 3333 9630
 

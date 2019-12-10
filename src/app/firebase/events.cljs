@@ -1,18 +1,20 @@
 (ns app.firebase.events
   (:require [re-frame.core :refer [dispatch reg-fx reg-event-db reg-event-fx ]]
+            [promesa.core :as p]
             [app.firebase.db :as db]
             ["firebase/app" :as firebase]))
 
 (reg-fx
   ::sign-in-with-google
-  (fn [_]
+  (fn [{:keys [success]}]
     (let [provider (firebase/auth.GoogleAuthProvider.)]
-      (.signInWithPopup (firebase/auth) provider))))
-
+      (-> (.signInWithPopup (firebase/auth) provider)
+          (p/then #(dispatch success))))))
 (reg-fx
   ::sign-out
-  (fn [_]
-    (.signOut (firebase/auth))))
+  (fn [{:keys [success]}]
+    (-> (.signOut (firebase/auth))
+        (p/then #(dispatch success)))))
 
 (def observation-fx
   (let [subscriptions (atom {})
@@ -28,8 +30,9 @@
                        (handler {:action :stop :id id}))
                      (when (or override (not subscription))
                        (save-listener id subject event))))
-          :stop (do ((get @subscriptions id))
-                    (swap! subscriptions dissoc id))
+          :stop (let [subscription (get @subscriptions id)]
+                  (do (when subscription (subscription))
+                      (swap! subscriptions dissoc id)))
           :clean (doseq [id (keys @subscriptions)]
                    (handler {:action :stop :id id}))))))
 

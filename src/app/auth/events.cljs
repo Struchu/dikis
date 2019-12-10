@@ -66,9 +66,19 @@
 (reg-event-fx
   :sign-in-with-google
   (fn [_ _]
-    {:app.firebase.events/sign-in-with-google nil}))
+    {:app.firebase.events/sign-in-with-google {:success [:login-successful]}}))
 
 (reg-event-fx
   :sign-out
   (fn [_ _]
-    {:app.firebase.events/sign-out nil}))
+    {:app.firebase.events/sign-out {:success [:logout-successful]}}))
+
+(reg-event-fx
+  :login-successful
+  (fn [_ _]
+    {:navigate-to {:path (router/path-for :teams)}}))
+
+(reg-event-fx
+  :logout-successful
+  (fn [_ _]
+    {:navigate-to {:path (router/path-for :index)}}))
