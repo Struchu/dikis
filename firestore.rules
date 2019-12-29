@@ -1,17 +1,53 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isTeamOwner(user_id, team_id) {
+      return get(/databases/$(database)/documents/team-role/$(team_id)).data.owner == user_id;
+    }
 
-    // This rule allows anyone on the internet to view, edit, and delete
-    // all data in your Firestore database. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Firestore database will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // your app will lose access to your Firestore database
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2019, 12, 26);
+    function isTeamMember(user_id, team_id) {
+      return exists(/databases/$(database)/documents/team-role/$(team_id)/members/$(user_id));
+    }
+
+    function isTeamAdmin(user_id, team_id) {
+      return get(/databases/$(database)/documents/team-role/$(team_id)/members/$(user_id)).data.role == "admin";
+    }
+
+    match /team-role/{team_id} {
+      function isInvitedTo(invitation_id) {
+        return get(/databases/$(database)/documents/invitations/$(invitation_id)).data.email == request.auth.token.email
+               && get(/databases/$(database)/documents/invitations/$(invitation_id)).data.team["team-id"] == team_id;
+      }
+
+      match /members/{user_id} {
+        allow read: if isTeamMember(request.auth.uid, team_id);
+        allow create: if (request.resource.data.role == "admin" && isTeamOwner(user_id, team_id))
+                      || (request.resource.data.role == "member" && user_id == request.auth.uid && isInvitedTo(request.resource.data["invitation-id"]));
+      }
+
+      allow create: if request.resource.data.owner == request.auth.uid;
+      allow read: if true;
+    }
+
+    match /invitations/{invitation_id} {
+      function isInvitee() {
+        return resource.data.email == request.auth.token.email;
+      }
+
+      allow read, delete: if isInvitee();
+      allow create: if isTeamAdmin(request.auth.uid, request.resource.data.team["team-id"]);
+    }
+
+    match /user-team/{user_team_id} {
+      allow write: if request.resource.data.uid == request.auth.uid && isTeamMember(request.auth.uid, request.resource.data["team-id"])
+      allow read: if request.auth.uid == resource.data.uid || isTeamMember(request.auth.uid, resource.data["team-id"]);
+    }
+
+    match /dicks/{dick_id} {
+      allow create: if request.resource.data.sender.uid == request.auth.uid
+                    && isTeamMember(request.resource.data.sender.uid, request.resource.data["team-id"])
+                    && isTeamMember(request.resource.data.receiver.uid, request.resource.data["team-id"]);
+      allow read: if isTeamMember(request.auth.uid, resource.data["team-id"]);
     }
   }
 }

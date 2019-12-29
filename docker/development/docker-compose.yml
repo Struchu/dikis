@@ -1,6 +1,13 @@
 version: '3.4'
 
 services:
+    firestore-emulator:
+        build:
+            context: ../..
+            dockerfile: docker/development/Dockerfile-firestore
+        volumes:
+            - ../..:/app
+        network_mode: "host"
     dikis:
         build:
             context: ../..
@@ -14,6 +21,7 @@ services:
             - "8000:8000"
             - "3333:3333"
             - "9630:9630"
+        network_mode: "host"
 
 volumes:
     maven-cache:

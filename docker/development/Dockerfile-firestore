@@ -1,0 +1,11 @@
+FROM node:12-alpine
+
+RUN apk --update add openjdk8-jre
+RUN npm install -g firebase-tools
+
+WORKDIR /app
+USER 1000:1000
+
+RUN firebase setup:emulators:firestore
+
+CMD ["firebase", "emulators:start", "--only", "firestore"]

@@ -1,5 +1,6 @@
 (ns app.invitations.events
   (:require [re-frame.core :refer [reg-event-db reg-event-fx reg-fx]]
+            [promesa.core :as p]
             [app.firebase.db :as db]
             [app.helpers :as h]))
 
@@ -36,17 +37,16 @@
                               (db/collection :members)
                               (db/ref uid))
           invitation-ref (-> :invitations (db/collection) (db/ref invitation-id))]
-      (db/batch!
-        #(db/save! % (db/ref (db/collection :user-team)) {:uid uid
-                                                          :team-id team-id
-                                                          :name name
-                                                          :picture-url picture-url
-                                                          :profile {:email email
-                                                                    :photo-url photo-url
-                                                                    :display-name display-name}})
-        #(db/save! % team-member-ref {:role :member
-                                      :invitation-id invitation-id})
-        #(db/delete! % invitation-ref)))))
+      (-> (db/save! team-member-ref {:role :member
+                                     :invitation-id invitation-id})
+          (p/then #(db/save! (db/ref (db/collection :user-team)) {:uid uid
+                                                                  :team-id team-id
+                                                                  :name name
+                                                                  :picture-url picture-url
+                                                                  :profile {:email email
+                                                                            :photo-url photo-url
+                                                                            :display-name display-name}}))
+          (p/then #(db/delete! invitation-ref))))))
 
 (reg-event-fx
   :accept-invitation

@@ -27,7 +27,6 @@
 (reg-fx
   :save-dick
   (fn [{:keys [sender receiver desc team-id]}]
-    (.log js/console sender receiver)
     (db/save! (db/ref (db/collection :dicks)) {:sender sender
                                                :receiver receiver
                                                :desc desc

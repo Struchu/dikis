@@ -13,7 +13,8 @@
     "release": "concurrently npm:release-*",
     "repl": "shadow-cljs cljs-repl app",
     "shadow-cljs": "shadow-cljs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "shadow-cljs compile test && node out/node-tests.js",
+    "watch:test": "shadow-cljs watch test"
   },
   "keywords": [
     "dikis",
@@ -25,6 +26,7 @@
   "author": "Struchu",
   "license": "ISC",
   "devDependencies": {
+    "@firebase/testing": "^0.16.4",
     "concurrently": "^5.0.0",
     "node-sass": "^4.13.0",
     "node-sass-tilde-importer": "^1.0.2",

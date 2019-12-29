@@ -1,6 +1,7 @@
 (ns app.teams.events
   (:require [re-frame.core :refer [->interceptor reg-cofx reg-fx inject-cofx
                                    reg-event-db reg-event-fx]]
+            [promesa.core :as p]
             [app.firebase.db :as db]
             [app.helpers :as h]))
 
@@ -14,14 +15,13 @@
   (fn [{:keys [uid team-id name picture-url profile]}]
     (let [team-role-ref (db/ref (db/collection :team-role) team-id)
           team-member-ref (db/ref (db/collection team-role-ref :members) uid)]
-      (db/batch!
-        #(db/save! % (db/ref (db/collection :user-team)) {:uid uid
-                                                          :team-id team-id
-                                                          :name name
-                                                          :picture-url picture-url
-                                                          :profile profile})
-        #(db/save! % team-role-ref {:creator uid})
-        #(db/save! % team-member-ref {:role :admin})))))
+      (-> (db/save! team-role-ref {:owner uid})
+          (p/then #(db/save! team-member-ref {:role :admin}))
+          (p/then #(db/save! (db/ref (db/collection :user-team)) {:uid uid
+                                                                  :team-id team-id
+                                                                  :name name
+                                                                  :profile profile
+                                                                  :picture-url picture-url}))))))
 
 (reg-event-fx
   :create-team
